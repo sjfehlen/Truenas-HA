@@ -1,7 +1,7 @@
 ---
 cloudsync_run:
   name: Cloudsync Run
-  description: Start a Clousync Job
+  description: Start a Cloudsync Job
   target:
     entity:
       integration: truenas    
@@ -9,7 +9,7 @@ cloudsync_run:
 
 cloudsync_abort:
   name: Cloudsync Abort
-  description: Abort a Clousync Job
+  description: Abort a Cloudsync Job
   target:
     entity:
       integration: truenas    

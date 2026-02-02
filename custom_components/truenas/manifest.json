@@ -1,13 +1,15 @@
 {
     "domain": "truenas",
     "name": "TrueNAS",
+    "version": "2.0.0",
     "codeowners": [
         "@tomaae"
     ],
     "config_flow": true,
     "dependencies": [],
-    "documentation": "https://github.com/tomaae/homeassistant-truenas",
+    "documentation": "https://github.com/sjfehlen/Truenas-HA",
+    "homeassistant": "2023.1",
     "iot_class": "local_polling",
-    "issue_tracker": "https://github.com/tomaae/homeassistant-truenas/issues",
+    "issue_tracker": "https://github.com/sjfehlen/Truenas-HA/issues",
     "requirements": ["websockets>=15.0.1"]
 }
