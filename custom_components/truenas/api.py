@@ -101,6 +101,7 @@ class TrueNASAPI(object):
                     "ssl": self._ssl_context,
                     "max_size": 16777216,
                     "ping_interval": 20,
+                    "open_timeout": 10,  # 10 second timeout for connection
                 }
                 if not self._ssl_verify:
                     connection_kwargs["server_hostname"] = ""
@@ -130,11 +131,15 @@ class TrueNASAPI(object):
                 ):
                     self._error = "invalid_hostname"
 
-                if "timed out while waiting for handshake response" in e.args:
+                if "timed out while waiting for handshake response" in e.args or "timed out" in str(e).lower():
                     self._error = "handshake_timeout"
 
                 if "404" in str(e):
                     self._error = "api_not_found"
+
+                # Set a default error if none of the specific errors matched
+                if not self._error:
+                    self._error = "connection_refused"
 
                 if not self._error_logged:
                     _LOGGER.error("TrueNAS %s failed to connect (%s)", self._host, e)
