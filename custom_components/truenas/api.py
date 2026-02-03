@@ -54,24 +54,44 @@ class TrueNASAPI(object):
         verify_ssl: bool = True,
     ) -> None:
         """Initialize the TrueNAS API client.
-        
+
         Args:
-            host: TrueNAS hostname or IP address
+            host: TrueNAS hostname or IP address (optionally with http:// or https:// prefix)
             api_key: API key for authentication (generated in TrueNAS UI)
             verify_ssl: Whether to verify SSL certificates
         """
-        self._host = host
+        # Parse protocol from host if specified
+        use_ssl = True  # Default to HTTPS
+        clean_host = host
+
+        if host.lower().startswith("https://"):
+            use_ssl = True
+            clean_host = host[8:]  # Remove "https://"
+        elif host.lower().startswith("http://"):
+            use_ssl = False
+            clean_host = host[7:]  # Remove "http://"
+
+        self._host = clean_host
         self._api_key = api_key
         self._ssl_verify = verify_ssl
-        self._url = f"wss://{self._host}/api/current"
-        self._ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
-        self._ssl_context.minimum_version = ssl.TLSVersion.TLSv1_2
-        if verify_ssl:
-            self._ssl_context.check_hostname = True
-            self._ssl_context.verify_mode = ssl.CERT_REQUIRED
+        self._use_ssl = use_ssl
+
+        # Build WebSocket URL based on protocol
+        ws_protocol = "wss" if use_ssl else "ws"
+        self._url = f"{ws_protocol}://{self._host}/api/current"
+
+        # Only create SSL context if using SSL
+        if use_ssl:
+            self._ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+            self._ssl_context.minimum_version = ssl.TLSVersion.TLSv1_2
+            if verify_ssl:
+                self._ssl_context.check_hostname = True
+                self._ssl_context.verify_mode = ssl.CERT_REQUIRED
+            else:
+                self._ssl_context.check_hostname = False
+                self._ssl_context.verify_mode = ssl.CERT_NONE
         else:
-            self._ssl_context.check_hostname = False
-            self._ssl_context.verify_mode = ssl.CERT_NONE
+            self._ssl_context = None
 
         self.lock = Lock()
         self._connected = False
@@ -96,15 +116,19 @@ class TrueNASAPI(object):
             self._connected = False
             self._error = ""
             try:
-                # Disable SNI when verify_ssl is False to avoid TLSV1_UNRECOGNIZED_NAME errors
+                # Build connection parameters
                 connection_kwargs = {
-                    "ssl": self._ssl_context,
                     "max_size": 16777216,
                     "ping_interval": 20,
                     "open_timeout": 10,  # 10 second timeout for connection
                 }
-                if not self._ssl_verify:
-                    connection_kwargs["server_hostname"] = ""
+
+                # Only add SSL parameters if using HTTPS
+                if self._use_ssl:
+                    connection_kwargs["ssl"] = self._ssl_context
+                    # Disable SNI when verify_ssl is False to avoid TLSV1_UNRECOGNIZED_NAME errors
+                    if not self._ssl_verify:
+                        connection_kwargs["server_hostname"] = ""
 
                 self._ws = connect(self._url, **connection_kwargs)
             except Exception as e:

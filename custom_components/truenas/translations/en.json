@@ -5,7 +5,7 @@
                 "description": "Set up TrueNAS integration.",
                 "data": {
                     "name": "Name of the integration",
-                    "host": "Host",
+                    "host": "Host (e.g., 192.168.1.100:8443 or http://192.168.1.100:8080)",
                     "api_key": "API key",
                     "verify_ssl": "Verify SSL certificate"
                 }
