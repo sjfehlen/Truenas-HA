@@ -6,10 +6,6 @@ This is an updated version of the TrueNAS integration for Home Assistant, compat
 
 This custom integration allows Home Assistant to monitor and interact with TrueNAS SCALE systems. It provides sensors for system information, disks, pools, datasets, virtual machines, apps, and more.
 
-## What's New in This Version
-
-This version has been updated to align with the TrueNAS SCALE v25.10.2 API specifications while maintaining full backward compatibility with existing functionality.
-
 ### API Changes from Previous Versions
 
 The integration now explicitly documents and supports the v25.10.2 API structure:
@@ -302,6 +298,9 @@ For TrueNAS API documentation:
 - Visit `https://<your-truenas-ip>/api/docs/`
 - Official TrueNAS Documentation: https://www.truenas.com/docs/
 
+## AI Disclaimer
+- This was generated using Claude Code. Please review carefully before using.
+
 ## Changelog
 
 ### Version 2.0.0
@@ -312,5 +311,4 @@ For TrueNAS API documentation:
 - Improved error handling and logging
 - Updated connection handling for WebSocket API
 
-### Previous Versions
-See original repository for historical changelog.
+
