@@ -3,7 +3,7 @@
     "name": "TrueNAS",
     "version": "2.0.7",
     "codeowners": [
-        "@tomaae"
+        "@sjfehlen"
     ],
     "config_flow": true,
     "dependencies": [],
