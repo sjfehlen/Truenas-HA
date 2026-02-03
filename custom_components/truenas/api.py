@@ -128,7 +128,9 @@ class TrueNASAPI(object):
                     connection_kwargs["ssl"] = self._ssl_context
                     # Disable SNI when verify_ssl is False to avoid TLSV1_UNRECOGNIZED_NAME errors
                     if not self._ssl_verify:
-                        connection_kwargs["server_hostname"] = ""
+                        # Extract hostname without port for SNI
+                        hostname = self._host.split(':')[0] if ':' in self._host else self._host
+                        connection_kwargs["server_hostname"] = hostname
 
                 self._ws = connect(self._url, **connection_kwargs)
             except Exception as e:
