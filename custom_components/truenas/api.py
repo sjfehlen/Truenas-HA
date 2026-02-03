@@ -126,6 +126,10 @@ class TrueNASAPI(object):
                 # Only add SSL parameters if using HTTPS
                 if self._use_ssl:
                     connection_kwargs["ssl"] = self._ssl_context
+                    # Explicitly disable SNI when not verifying SSL to prevent TLSV1_UNRECOGNIZED_NAME errors
+                    # This is crucial when connecting to IP addresses instead of hostnames
+                    if not self._ssl_verify:
+                        connection_kwargs["server_hostname"] = None
 
                 self._ws = connect(self._url, **connection_kwargs)
             except Exception as e:
