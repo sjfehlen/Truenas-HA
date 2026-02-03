@@ -1,6 +1,6 @@
 {
-    "domain": "truenas-scale",
-    "name": "TrueNAS-scale",
+    "domain": "truenas",
+    "name": "TrueNAS",
     "version": "2.0.7",
     "codeowners": [
         "@sjfehlen"
