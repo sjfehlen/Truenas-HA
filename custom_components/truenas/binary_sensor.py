@@ -65,10 +65,10 @@ class TrueNASVMBinarySensor(TrueNASBinarySensor):
     """Define a TrueNAS VM Binary Sensor."""
 
     async def start(self, overcommit: bool = False):
-        """Start a VM."""  # virt.instance.start
+        """Start a VM."""  # vm.start
         tmp_vm = await self.hass.async_add_executor_job(
             self.coordinator.api.query,
-            "virt.instance.get_instance",
+            "vm.get_instance",
             [self._data["id"]],
         )
 
@@ -84,7 +84,7 @@ class TrueNASVMBinarySensor(TrueNASBinarySensor):
 
         await self.hass.async_add_executor_job(
             self.coordinator.api.query,
-            "virt.instance.start",
+            "vm.start",
             [self._data["id"]],
         )
 
@@ -92,7 +92,7 @@ class TrueNASVMBinarySensor(TrueNASBinarySensor):
         """Stop a VM."""
         tmp_vm = await self.hass.async_add_executor_job(
             self.coordinator.api.query,
-            "virt.instance.get_instance",
+            "vm.get_instance",
             [self._data["id"]],
         )
 
@@ -108,7 +108,7 @@ class TrueNASVMBinarySensor(TrueNASBinarySensor):
 
         await self.hass.async_add_executor_job(
             self.coordinator.api.query,
-            "virt.instance.stop",
+            "vm.stop",
             [self._data["id"], {"timeout": 0, "force": True}],
         )
 
