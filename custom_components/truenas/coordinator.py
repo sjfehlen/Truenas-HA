@@ -821,7 +821,7 @@ class TrueNASCoordinator(DataUpdateCoordinator[None]):
     # ---------------------------
     #   get_vm
     # ---------------------------
-   def get_vm(self) -> None:
+    def get_vm(self) -> None:
     """Get VMs from TrueNAS."""
     self.ds["vm"] = parse_api(
         data=self.ds["vm"],
