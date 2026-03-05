@@ -65,7 +65,7 @@ class TrueNASVMBinarySensor(TrueNASBinarySensor):
     """Define a TrueNAS VM Binary Sensor."""
 
     async def start(self, overcommit: bool = False):
-        """Start a VM."""  # vm.start
+        """Start a VM."""
         tmp_vm = await self.hass.async_add_executor_job(
             self.coordinator.api.query,
             "vm.get_instance",
@@ -76,7 +76,7 @@ class TrueNASVMBinarySensor(TrueNASBinarySensor):
             _LOGGER.error("VM %s (%s) invalid", self._data["name"], self._data["id"])
             return
 
-        if tmp_vm["status"] != "STOPPED":
+        if tmp_vm["status"]["state"] != "STOPPED":
             _LOGGER.warning(
                 "VM %s (%s) is not down", self._data["name"], self._data["id"]
             )
@@ -100,7 +100,7 @@ class TrueNASVMBinarySensor(TrueNASBinarySensor):
             _LOGGER.error("VM %s (%s) invalid", self._data["name"], self._data["id"])
             return
 
-        if tmp_vm["status"] != "RUNNING":
+        if tmp_vm["status"]["state"] != "RUNNING":
             _LOGGER.warning(
                 "VM %s (%s) is not up", self._data["name"], self._data["id"]
             )
