@@ -821,30 +821,33 @@ class TrueNASCoordinator(DataUpdateCoordinator[None]):
     # ---------------------------
     #   get_vm
     # ---------------------------
-    def get_vm(self) -> None:
-        """Get VMs from TrueNAS."""
-        self.ds["vm"] = parse_api(
-            data=self.ds["vm"],
-            source=self.api.query("virt.instance.query"),
-            key="id",
-            vals=[
-                {"name": "id", "default": 0},
-                {"name": "name", "default": "unknown"},
-                {"name": "type", "default": "unknown"},
-                {"name": "cpu", "default": 0},
-                {"name": "memory", "default": 0},
-                {"name": "autostart", "type": "bool", "default": False},
-                {"name": "image", "source": "image/description", "default": "unknown"},
-                {"name": "status", "default": "unknown"},
-            ],
-            ensure_vals=[
-                {"name": "running", "type": "bool", "default": False},
-            ],
-        )
+   def get_vm(self) -> None:
+    """Get VMs from TrueNAS."""
+    self.ds["vm"] = parse_api(
+        data=self.ds["vm"],
+        source=self.api.query("vm.query"),
+        key="id",
+        vals=[
+            {"name": "id", "default": 0},
+            {"name": "name", "default": "unknown"},
+            {"name": "type", "default": "unknown"},
+            {"name": "vcpus", "default": 0},
+            {"name": "memory", "default": 0},
+            {"name": "autostart", "type": "bool", "default": False},
+            {"name": "description", "default": "unknown"},
+            {"name": "status", "source": "status/state", "default": "unknown"},
+        ],
+        ensure_vals=[
+            {"name": "running", "type": "bool", "default": False},
+            {"name": "cpu", "default": 0},
+            {"name": "image", "default": "unknown"},
+        ],
+    )
 
-        for uid, vals in self.ds["vm"].items():
-            self.ds["vm"][uid]["memory"] = round(vals["memory"] / 1024 / 1024 / 1024)
-            self.ds["vm"][uid]["running"] = vals["status"] == "RUNNING"
+    for uid, vals in self.ds["vm"].items():
+        self.ds["vm"][uid]["memory"] = round(vals["memory"] / 1024)
+        self.ds["vm"][uid]["running"] = vals["status"] == "RUNNING"
+        self.ds["vm"][uid]["cpu"] = vals["vcpus"]
 
     # ---------------------------
     #   get_cloudsync
