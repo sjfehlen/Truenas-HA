@@ -808,8 +808,18 @@ class TrueNASCoordinator(DataUpdateCoordinator[None]):
         )
 
         for uid, vals in self.ds["vm"].items():
-            self.ds["vm"][uid]["running"] = vals["status"] == "RUNNING"
-            self.ds["vm"][uid]["cpu"] = vals["vcpus"]
+            # Set running state first to ensure it's always updated
+            status = vals.get("status", "")
+            self.ds["vm"][uid]["running"] = (
+                isinstance(status, str) and status.upper() == "RUNNING"
+            )
+            self.ds["vm"][uid]["cpu"] = vals.get("vcpus", 0)
+            # Safely convert memory from MB to GB
+            mem = vals.get("memory")
+            if isinstance(mem, (int, float)) and mem > 0:
+                self.ds["vm"][uid]["memory"] = round(mem / 1024)
+            else:
+                self.ds["vm"][uid]["memory"] = 0
 
     # ---------------------------
     #   get_cloudsync
