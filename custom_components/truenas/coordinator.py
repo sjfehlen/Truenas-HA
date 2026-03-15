@@ -873,7 +873,7 @@ class TrueNASCoordinator(DataUpdateCoordinator[None]):
             key="id",
             vals=[
                 {"name": "id", "default": 0},
-                {"name": "description", "default": "unknown"},
+                {"name": "description", "source": "desc", "default": "unknown"},
                 {"name": "direction", "default": "unknown"},
                 {"name": "path", "default": "unknown"},
                 {"name": "remotehost", "default": "unknown"},
