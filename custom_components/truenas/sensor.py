@@ -35,6 +35,7 @@ async def async_setup_entry(
         "TrueNASSensor": TrueNASSensor,
         "TrueNASUptimeSensor": TrueNASUptimeSensor,
         "TrueNASClousyncSensor": TrueNASClousyncSensor,
+        "TrueNASRsynctaskSensor": TrueNASRsynctaskSensor,
         "TrueNASDatasetSensor": TrueNASDatasetSensor,
     }
     await async_add_entities(hass, config_entry, dispatcher)
@@ -182,5 +183,76 @@ class TrueNASClousyncSensor(TrueNASSensor):
         await self.hass.async_add_executor_job(
             self.coordinator.api.query,
             "cloudsync.abort",
+            [self._data["id"]],
+        )
+
+
+# ---------------------------
+#   TrueNASRsynctaskSensor
+# ---------------------------
+class TrueNASRsynctaskSensor(TrueNASSensor):
+    """Define a TrueNAS Rsync task sensor."""
+
+    async def start(self) -> None:
+        """Run rsync task."""
+        tmp_job = await self.hass.async_add_executor_job(
+            self.coordinator.api.query,
+            "rsynctask.get_instance",
+            [self._data["id"]],
+        )
+
+        if "job" not in tmp_job:
+            _LOGGER.error(
+                "Rsynctask %s (%s) invalid",
+                self._data["description"],
+                self._data["id"],
+            )
+            return
+        if tmp_job["job"] and "state" in tmp_job["job"] and tmp_job["job"]["state"] in [
+            "WAITING",
+            "RUNNING",
+        ]:
+            _LOGGER.warning(
+                "Rsynctask %s (%s) is already running",
+                self._data["description"],
+                self._data["id"],
+            )
+            return
+
+        await self.hass.async_add_executor_job(
+            self.coordinator.api.query,
+            "rsynctask.run",
+            [self._data["id"]],
+        )
+
+    async def stop(self) -> None:
+        """Abort rsync task."""
+        tmp_job = await self.hass.async_add_executor_job(
+            self.coordinator.api.query,
+            "rsynctask.get_instance",
+            [self._data["id"]],
+        )
+
+        if "job" not in tmp_job:
+            _LOGGER.error(
+                "Rsynctask %s (%s) invalid",
+                self._data["description"],
+                self._data["id"],
+            )
+            return
+        if not tmp_job["job"] or "state" not in tmp_job["job"] or tmp_job["job"]["state"] not in [
+            "WAITING",
+            "RUNNING",
+        ]:
+            _LOGGER.warning(
+                "Rsynctask %s (%s) is not running",
+                self._data["description"],
+                self._data["id"],
+            )
+            return
+
+        await self.hass.async_add_executor_job(
+            self.coordinator.api.query,
+            "rsynctask.abort",
             [self._data["id"]],
         )

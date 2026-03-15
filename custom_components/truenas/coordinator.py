@@ -54,6 +54,7 @@ class TrueNASCoordinator(DataUpdateCoordinator[None]):
             "service": {},
             "vm": {},
             "cloudsync": {},
+            "rsynctask": {},
             "replication": {},
             "snapshottask": {},
             "app": {},
@@ -97,6 +98,7 @@ class TrueNASCoordinator(DataUpdateCoordinator[None]):
             self.get_pool,
             self.get_vm,
             self.get_cloudsync,
+            self.get_rsynctask,
             self.get_replication,
             self.get_snapshottask,
             self.get_app,
@@ -856,6 +858,35 @@ class TrueNASCoordinator(DataUpdateCoordinator[None]):
                     "name": "job_description",
                     "source": "job/progress/description",
                     "default": "unknown",
+                },
+            ],
+        )
+
+    # ---------------------------
+    #   get_rsynctask
+    # ---------------------------
+    def get_rsynctask(self) -> None:
+        """Get rsync tasks from TrueNAS."""
+        self.ds["rsynctask"] = parse_api(
+            data=self.ds["rsynctask"],
+            source=self.api.query("rsynctask.query"),
+            key="id",
+            vals=[
+                {"name": "id", "default": 0},
+                {"name": "description", "default": "unknown"},
+                {"name": "direction", "default": "unknown"},
+                {"name": "path", "default": "unknown"},
+                {"name": "remotehost", "default": "unknown"},
+                {"name": "remoteport", "default": 0},
+                {"name": "mode", "default": "unknown"},
+                {"name": "remotepath", "default": "unknown"},
+                {"name": "enabled", "type": "bool", "default": False},
+                {"name": "state", "source": "job/state", "default": "unknown"},
+                {
+                    "name": "time_finished",
+                    "source": "job/time_finished/$date",
+                    "default": 0,
+                    "convert": "utc_from_timestamp",
                 },
             ],
         )

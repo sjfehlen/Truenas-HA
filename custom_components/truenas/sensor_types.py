@@ -24,11 +24,15 @@ from .const import (
     SCHEMA_SERVICE_DATASET_SNAPSHOT,
     SCHEMA_SERVICE_SYSTEM_REBOOT,
     SCHEMA_SERVICE_SYSTEM_SHUTDOWN,
+    SCHEMA_SERVICE_RSYNCTASK_RUN,
+    SCHEMA_SERVICE_RSYNCTASK_ABORT,
     SERVICE_CLOUDSYNC_RUN,
     SERVICE_CLOUDSYNC_ABORT,
     SERVICE_DATASET_SNAPSHOT,
     SERVICE_SYSTEM_REBOOT,
     SERVICE_SYSTEM_SHUTDOWN,
+    SERVICE_RSYNCTASK_RUN,
+    SERVICE_RSYNCTASK_ABORT,
 )
 
 DEVICE_ATTRIBUTES_NETWORK = [
@@ -135,6 +139,14 @@ DEVICE_ATTRIBUTES_REPLICATION = [
     "time_finished",
     "job_percent",
     "job_description",
+]
+
+DEVICE_ATTRIBUTES_RSYNCTASK = [
+    "path",
+    "remotehost",
+    "direction",
+    "enabled",
+    "time_finished",
 ]
 
 DEVICE_ATTRIBUTES_SNAPSHOTTASK = [
@@ -383,6 +395,23 @@ SENSOR_TYPES: tuple[TrueNASSensorEntityDescription, ...] = (
         data_attributes_list=DEVICE_ATTRIBUTES_REPLICATION,
     ),
     TrueNASSensorEntityDescription(
+        key="rsynctask",
+        name="",
+        icon="mdi:sync",
+        native_unit_of_measurement=None,
+        device_class=None,
+        state_class=None,
+        entity_category=None,
+        ha_group="Rsync tasks",
+        data_path="rsynctask",
+        data_attribute="state",
+        data_name="description",
+        data_uid="",
+        data_reference="id",
+        data_attributes_list=DEVICE_ATTRIBUTES_RSYNCTASK,
+        func="TrueNASRsynctaskSensor",
+    ),
+    TrueNASSensorEntityDescription(
         key="snapshottask",
         name="",
         icon="mdi:checkbox-marked-circle-plus-outline",
@@ -439,6 +468,8 @@ SENSOR_TYPES: tuple[TrueNASSensorEntityDescription, ...] = (
 SENSOR_SERVICES = [
     [SERVICE_CLOUDSYNC_RUN, SCHEMA_SERVICE_CLOUDSYNC_RUN, "start"],
     [SERVICE_CLOUDSYNC_ABORT, SCHEMA_SERVICE_CLOUDSYNC_ABORT, "stop"],
+    [SERVICE_RSYNCTASK_RUN, SCHEMA_SERVICE_RSYNCTASK_RUN, "start"],
+    [SERVICE_RSYNCTASK_ABORT, SCHEMA_SERVICE_RSYNCTASK_ABORT, "stop"],
     [SERVICE_DATASET_SNAPSHOT, SCHEMA_SERVICE_DATASET_SNAPSHOT, "snapshot"],
     [SERVICE_SYSTEM_REBOOT, SCHEMA_SERVICE_SYSTEM_REBOOT, "restart"],
     [SERVICE_SYSTEM_SHUTDOWN, SCHEMA_SERVICE_SYSTEM_SHUTDOWN, "stop"],

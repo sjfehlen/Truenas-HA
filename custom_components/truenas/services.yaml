@@ -15,6 +15,22 @@ cloudsync_abort:
       integration: truenas    
       domain: sensor
 
+rsynctask_run:
+  name: Rsync Task Run
+  description: Start an Rsync Task
+  target:
+    entity:
+      integration: truenas
+      domain: sensor
+
+rsynctask_abort:
+  name: Rsync Task Abort
+  description: Abort a running Rsync Task
+  target:
+    entity:
+      integration: truenas
+      domain: sensor
+
 dataset_snapshot:
   name: Dataset Snapshot
   description: Create a Dataset Snapshot
