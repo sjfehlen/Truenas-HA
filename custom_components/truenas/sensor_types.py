@@ -142,6 +142,7 @@ DEVICE_ATTRIBUTES_REPLICATION = [
 ]
 
 DEVICE_ATTRIBUTES_RSYNCTASK = [
+    "description",
     "path",
     "remotehost",
     "direction",
@@ -405,7 +406,7 @@ SENSOR_TYPES: tuple[TrueNASSensorEntityDescription, ...] = (
         ha_group="Rsync tasks",
         data_path="rsynctask",
         data_attribute="state",
-        data_name="description",
+        data_name="name",
         data_uid="",
         data_reference="id",
         data_attributes_list=DEVICE_ATTRIBUTES_RSYNCTASK,

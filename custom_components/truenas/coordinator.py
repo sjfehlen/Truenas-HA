@@ -889,7 +889,18 @@ class TrueNASCoordinator(DataUpdateCoordinator[None]):
                     "convert": "utc_from_timestamp",
                 },
             ],
+            ensure_vals=[
+                {"name": "name", "default": "unknown"},
+            ],
         )
+
+        for uid, vals in self.ds["rsynctask"].items():
+            desc = vals.get("description", "")
+            path = vals.get("path", "")
+            if desc and desc != "unknown":
+                self.ds["rsynctask"][uid]["name"] = desc
+            else:
+                self.ds["rsynctask"][uid]["name"] = path if path and path != "unknown" else "unknown"
 
     # ---------------------------
     #   get_replication
