@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.16] - 2026-08-31
+
+### Added
+- Rsync task sensor now exposes `state`, `time_started`, `job_percent`, and `job_description`
+  attributes (previously only `time_finished` was surfaced), so a task's last-run result
+  (`SUCCESS`/`FAILED`/`RUNNING`/`PENDING`) is visible in HA instead of only its last-finished
+  timestamp. Mirrors the replication sensor's existing attribute set.
+
 ## [2.0.0] - 2026-02-02
 
 ### Added

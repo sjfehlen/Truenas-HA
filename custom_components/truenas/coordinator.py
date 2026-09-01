@@ -883,10 +883,22 @@ class TrueNASCoordinator(DataUpdateCoordinator[None]):
                 {"name": "enabled", "type": "bool", "default": False},
                 {"name": "state", "source": "job/state", "default": "unknown"},
                 {
+                    "name": "time_started",
+                    "source": "job/time_started/$date",
+                    "default": 0,
+                    "convert": "utc_from_timestamp",
+                },
+                {
                     "name": "time_finished",
                     "source": "job/time_finished/$date",
                     "default": 0,
                     "convert": "utc_from_timestamp",
+                },
+                {"name": "job_percent", "source": "job/progress/percent", "default": 0},
+                {
+                    "name": "job_description",
+                    "source": "job/progress/description",
+                    "default": "unknown",
                 },
             ],
             ensure_vals=[

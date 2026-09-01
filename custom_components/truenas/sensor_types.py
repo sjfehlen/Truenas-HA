@@ -147,7 +147,11 @@ DEVICE_ATTRIBUTES_RSYNCTASK = [
     "remotehost",
     "direction",
     "enabled",
+    "state",
+    "time_started",
     "time_finished",
+    "job_percent",
+    "job_description",
 ]
 
 DEVICE_ATTRIBUTES_SNAPSHOTTASK = [
