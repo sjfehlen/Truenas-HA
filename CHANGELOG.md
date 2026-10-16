@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.17] - 2026-10-16
+
+### Fixed
+- System update check now uses `update.status`. TrueNAS 25.10 no longer has
+  `update.check_available`, so the "TrueNAS Update" entity always reported no update and
+  logged `Method does not exist` on every check.
+
+### Removed
+- The Install button on the TrueNAS system update entity. It called `update.update`, which
+  in TrueNAS 25.10 only changes update settings (it no longer installs anything). The
+  entity is now report-only. App update entities are unchanged.
+
 ## [2.0.16] - 2026-08-31
 
 ### Added

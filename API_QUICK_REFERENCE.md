@@ -21,7 +21,7 @@ wss://<host>/api/current
 |--------|-------------|------------|------------|
 | `system.info` | System information | None | version, hostname, physmem, uptime_seconds |
 | `system.ready` | System ready status | None | Boolean |
-| `update.check_available` | Check updates | None | status, version, changelog |
+| `update.status` | Check updates | None | code, status.new_version (null if none), status.current_version |
 
 ## Storage Methods
 

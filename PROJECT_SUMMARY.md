@@ -121,7 +121,7 @@ Version history and changes:
 
 #### Core System
 - `system.info` - System information
-- `update.check_available` - Update checks
+- `update.status` - Update checks
 - `core.get_jobs` - Job monitoring
 
 #### Storage

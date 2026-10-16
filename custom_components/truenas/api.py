@@ -38,7 +38,7 @@ class TrueNASAPI(object):
     - cloudsync.query: Query cloud sync tasks
     - replication.query: Query replication tasks
     - pool.snapshottask.query: Query snapshot tasks
-    - update.check_available: Check for system updates
+    - update.status: Check for system updates
     - core.get_jobs: Get job status
     - reporting.netdata_get_data: Get performance metrics
     - disk.temperature_alerts: Get disk temperature data
@@ -277,7 +277,7 @@ class TrueNASAPI(object):
         - cloudsync.query: Get cloud sync tasks
         - replication.query: Get replication tasks
         - pool.snapshottask.query: Get snapshot tasks
-        - update.check_available: Check for updates
+        - update.status: Check for updates
         - reporting.netdata_get_data: Get metrics
         
         Args:
