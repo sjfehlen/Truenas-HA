@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.18] - 2026-10-16
+
+### Fixed
+- SSL verification failed with `unable to get local issuer certificate` when the TrueNAS
+  certificate comes from a public CA (for example a reverse proxy with a Let's Encrypt
+  certificate), because the SSL context never loaded the system CA certificates. It now
+  loads them when "Verify SSL" is on (#3).
+- The SSL context is now built on the first connect instead of in `TrueNASAPI.__init__`,
+  and the coordinator runs `connect()` in an executor thread, so loading CA certificates
+  from disk does not block the Home Assistant event loop.
+
 ## [2.0.17] - 2026-10-16
 
 ### Fixed
