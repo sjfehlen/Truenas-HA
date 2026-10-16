@@ -20,9 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - System update check now uses `update.status`. TrueNAS 25.10 no longer has
-  `update.check_available`, so the "TrueNAS Update" entity always reported no update and
-  logged `Method does not exist` on every check.
-
+  `update.check_available`, so the system update entity (`update.truenas_system`, "System")
+  always reported no update and logged `Method does not exist` on every check.
 - A successful API answer that contains an `error: null` field (as `update.status` does) was
   treated as an error response, which raised a `TypeError` in `query()`, dropped the
   connection and left the integration stuck in setup retry. Only a non-empty `error` is
