@@ -319,7 +319,7 @@ class TrueNASAPI(object):
                     else:
                         self._error = "malformed_result"
 
-                    if (type(data) is list or type(data) is dict) and "error" in data:
+                    if type(data) is dict and data.get("error"):
                         if (
                             "data" in data["error"]
                             and "reason" in data["error"]["data"]
