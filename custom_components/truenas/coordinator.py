@@ -20,6 +20,7 @@ from homeassistant.const import (
 from .api import TrueNASAPI
 from .apiparser import parse_api, utc_from_timestamp
 from .const import DOMAIN
+from .helper import parse_update_status
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -155,9 +156,6 @@ class TrueNASCoordinator(DataUpdateCoordinator[None]):
                 {"name": "memory-total_value", "default": 0.0},
                 {"name": "memory-usage_percent", "default": 0},
                 {"name": "update_available", "type": "bool", "default": False},
-                {"name": "update_progress", "default": 0},
-                {"name": "update_jobid", "default": 0},
-                {"name": "update_state", "default": "unknown"},
             ],
         )
         if not self.api.connected():
@@ -165,37 +163,6 @@ class TrueNASCoordinator(DataUpdateCoordinator[None]):
 
         if not self.ds["system_info"]["update_available"]:
             self.ds["system_info"]["update_version"] = self.ds["system_info"]["version"]
-
-        if self.ds["system_info"]["update_jobid"]:
-            self.ds["system_info"] = parse_api(
-                data=self.ds["system_info"],
-                source=self.api.query(
-                    "core.get_jobs",
-                    params=[[["id", "=", self.ds["system_info"]["update_jobid"]]]],
-                ),
-                vals=[
-                    {
-                        "name": "update_progress",
-                        "source": "progress/percent",
-                        "default": 0,
-                    },
-                    {
-                        "name": "update_state",
-                        "source": "state",
-                        "default": "unknown",
-                    },
-                ],
-            )
-            if not self.api.connected():
-                return
-
-            if (
-                self.ds["system_info"]["update_state"] != "RUNNING"
-                or not self.ds["system_info"]["update_available"]
-            ):
-                self.ds["system_info"]["update_progress"] = 0
-                self.ds["system_info"]["update_jobid"] = 0
-                self.ds["system_info"]["update_state"] = "unknown"
 
         if not self._version_major:
             self._version_major = int(
@@ -272,34 +239,15 @@ class TrueNASCoordinator(DataUpdateCoordinator[None]):
     #   get_updatecheck
     # ---------------------------
     def get_updatecheck(self) -> None:
-        self.ds["system_info"] = parse_api(
-            data=self.ds["system_info"],
-            source=self.api.query("update.check_available"),
-            vals=[
-                {
-                    "name": "update_status",
-                    "source": "status",
-                    "default": "unknown",
-                },
-                {
-                    "name": "update_version",
-                    "source": "version",
-                    "default": "unknown",
-                },
-            ],
-        )
+        parsed = parse_update_status(self.api.query("update.status"))
 
-        if not self.api.connected():
+        if not self.api.connected() or parsed is None:
             return
 
-        if (
-            self.ds["system_info"]["update_version"] == "unknown"
-            and self.ds["system_info"]["version"]
-        ):
-            self.ds["system_info"]["update_version"] = self.ds["system_info"]["version"]
-
-        self.ds["system_info"]["update_available"] = (
-            self.ds["system_info"]["update_status"] == "AVAILABLE"
+        update_available, update_version = parsed
+        self.ds["system_info"]["update_available"] = update_available
+        self.ds["system_info"]["update_version"] = (
+            update_version or self.ds["system_info"]["version"]
         )
 
     # ---------------------------

@@ -21,7 +21,7 @@ The integration uses the following TrueNAS v25.10.2 API methods:
 #### System Information
 - `system.info` - Get basic system information (version, hostname, memory, etc.)
 - `system.ready` - Check if system is ready
-- `update.check_available` - Check for available system updates
+- `update.status` - Check for available system updates
 
 #### Storage
 - `pool.query` - Query storage pools
@@ -268,7 +268,7 @@ logger:
 | `cloudsync.query` | Cloud sync tasks | Array of task objects |
 | `replication.query` | Replication tasks | Array of task objects |
 | `pool.snapshottask.query` | Snapshot tasks | Array of task objects |
-| `update.check_available` | Update check | Object with update info |
+| `update.status` | Update check | Object with `code`, `status` (`new_version` is null when no update is available) |
 | `core.get_jobs` | Job status | Array of job objects |
 | `reporting.netdata_get_data` | Performance data | Metrics object |
 

@@ -284,17 +284,20 @@ Query snapshot tasks.
 
 ### 9. Updates
 
-#### update.check_available
-Check for available system updates.
+#### update.status
+Check for available system updates. Replaces `update.check_available`, which no longer exists in TrueNAS 25.10.
 
-**Method**: `update.check_available`
+**Method**: `update.status`
 **Parameters**: None
 
 **Response Fields**:
-- `status`: Update status (AVAILABLE, NO_UPDATE, etc.)
-- `version`: Available version
-- `changelog`: Update changelog
-- `notes`: Update notes
+- `code`: `NORMAL` or `ERROR`
+- `status.current_version`: running `train`, `profile` and `matches_profile`
+- `status.new_version`: `null` when no update is available, otherwise an object with `version`, `manifest`, `release_notes` and `release_notes_url`
+- `status.update_download_progress`: `null` unless an update is downloading
+- `error`: `null` unless `code` is `ERROR` (`errname`, `reason`)
+
+Reference: https://api.truenas.com/v25.10/api_methods_update.status.html
 
 ### 10. Monitoring
 
