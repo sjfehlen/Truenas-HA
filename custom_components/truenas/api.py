@@ -80,23 +80,30 @@ class TrueNASAPI(object):
         ws_protocol = "wss" if use_ssl else "ws"
         self._url = f"{ws_protocol}://{self._host}/api/current"
 
-        # Only create SSL context if using SSL
-        if use_ssl:
-            self._ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
-            self._ssl_context.minimum_version = ssl.TLSVersion.TLSv1_2
-            if verify_ssl:
-                self._ssl_context.check_hostname = True
-                self._ssl_context.verify_mode = ssl.CERT_REQUIRED
-            else:
-                self._ssl_context.check_hostname = False
-                self._ssl_context.verify_mode = ssl.CERT_NONE
-        else:
-            self._ssl_context = None
+        self._ssl_context = None
 
         self.lock = Lock()
         self._connected = False
         self._error = ""
         self._error_logged = False
+
+    # ---------------------------
+    #   _build_ssl_context
+    # ---------------------------
+    def _build_ssl_context(self) -> ssl.SSLContext:
+        """Create the SSL context. Loads CA certificates from disk, so call it
+        from an executor thread, not the event loop.
+        """
+        context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+        context.minimum_version = ssl.TLSVersion.TLSv1_2
+        if self._ssl_verify:
+            context.load_default_certs()
+            context.check_hostname = True
+            context.verify_mode = ssl.CERT_REQUIRED
+        else:
+            context.check_hostname = False
+            context.verify_mode = ssl.CERT_NONE
+        return context
 
     # ---------------------------
     #   connect
@@ -115,6 +122,10 @@ class TrueNASAPI(object):
         with self.lock:
             self._connected = False
             self._error = ""
+
+            if self._use_ssl and self._ssl_context is None:
+                self._ssl_context = self._build_ssl_context()
+
             try:
                 # Build connection parameters
                 connection_kwargs = {
